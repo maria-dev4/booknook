@@ -57,8 +57,8 @@ export default async function BookPage({ params }: PageProps<"/books/[id]">) {
                 <ChevronIcon className="h-3 w-3" />
               </li>
               <li>
-                <Link href="/new-arrivals" className="transition-colors hover:text-forest">
-                  Shelves
+                <Link href="/books" className="transition-colors hover:text-forest">
+                  All Books
                 </Link>
               </li>
               <li aria-hidden="true">

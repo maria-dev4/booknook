@@ -273,6 +273,7 @@ export const reviews: Review[] = [
 
 export const navLinks = [
   { label: "Home", href: "/" },
+  { label: "All Books", href: "/books" },
   { label: "New Arrivals", href: "/new-arrivals" },
   { label: "Popular", href: "/popular" },
   { label: "How It Works", href: "/how-it-works" },
