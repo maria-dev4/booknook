@@ -34,6 +34,9 @@
   --color-ink: #1e2a22;
   --color-ink-muted: #5f6b60;
 
+  /* Clay red — form errors */
+  --color-error: #a8453c;
+
   --shadow-soft: 0 2px 4px rgba(20, 42, 29, 0.04), 0 12px 32px -12px rgba(20, 42, 29, 0.16);
   --shadow-lift: 0 4px 8px rgba(20, 42, 29, 0.05), 0 24px 48px -16px rgba(20, 42, 29, 0.26);
   --shadow-card: 0 1px 2px rgba(20, 42, 29, 0.05), 0 16px 40px -12px rgba(20, 42, 29, 0.18);

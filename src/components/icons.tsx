@@ -56,6 +56,25 @@ export function SearchIcon({ className = "h-5 w-5" }: IconProps) {
   );
 }
 
+export function EyeIcon({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" strokeLinejoin="round" />
+      <circle cx="12" cy="12" r="2.75" />
+    </svg>
+  );
+}
+
+export function EyeOffIcon({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
+      <path d="M4 4l16 16" strokeLinecap="round" />
+      <path d="M10 5.9a8.5 8.5 0 0 1 2-.4c6 0 9.5 6.5 9.5 6.5a17.6 17.6 0 0 1-2.5 3.4M6.3 7A16.8 16.8 0 0 0 2.5 12S6 18.5 12 18.5c1.2 0 2.3-.25 3.3-.7" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function BookmarkIcon({ className = "h-5 w-5" }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
