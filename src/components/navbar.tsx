@@ -84,7 +84,7 @@ export function Navbar() {
       {/* Mobile menu */}
       <div
         className={`overflow-hidden border-forest/10 bg-ivory/95 backdrop-blur-lg transition-all duration-300 lg:hidden ${
-          open ? "max-h-96 border-t" : "max-h-0"
+          open ? "max-h-[calc(100dvh-4.5rem)] border-t" : "max-h-0"
         }`}
       >
         <nav className="flex flex-col px-6 pb-6 pt-2" aria-label="Mobile">

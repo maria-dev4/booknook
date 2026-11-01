@@ -8,6 +8,9 @@ export type Book = {
   year: number;
   pages: number;
   blurb: string;
+  description?: string;
+  availableCopies?: number;
+  waitlist?: number;
 };
 
 export const newArrivals: Book[] = [
@@ -21,6 +24,10 @@ export const newArrivals: Book[] = [
     year: 2023,
     pages: 416,
     blurb: "Two friends build worlds together in a dazzling story of creativity and love.",
+    description:
+      "Sadie and Sam are playtesters of each other's lives — paired at a hospital for children, reunited decades later in a Cambridge subway. Told across the games they design, this is a shimmering meditation on friendship, ambition, art, and the shared worlds that outlast us all.",
+    availableCopies: 3,
+    waitlist: 2,
   },
   {
     id: "piranesi",
@@ -32,6 +39,10 @@ export const newArrivals: Book[] = [
     year: 2022,
     pages: 272,
     blurb: "A labyrinthine house, an endless sea, and a man who records its wonders.",
+    description:
+      "Piranesi lives in the House — thirteen dead statues, forty halls, and tides that crash through the lower floors twice a day. He keeps meticulous journals of its kindness. Then a message appears in a folded notebook, and the beautiful, odd tranquillity of his world begins to crack.",
+    availableCopies: 2,
+    waitlist: 5,
   },
   {
     id: "klara-sun",
@@ -43,6 +54,10 @@ export const newArrivals: Book[] = [
     year: 2024,
     pages: 320,
     blurb: "An artificial friend observes the world with astonishing tenderness.",
+    description:
+      "Klara sits in the store window, learning the sun's patterns and hoping a customer will choose her. When she finally goes home with ailing Josie, she keeps trying to understand a love that outlasts even the machines. A quiet, luminous novel told entirely through an artificial heart.",
+    availableCopies: 4,
+    waitlist: 0,
   },
   {
     id: "circe",
@@ -54,6 +69,10 @@ export const newArrivals: Book[] = [
     year: 2023,
     pages: 448,
     blurb: "The daughter of Helios forges her own myth among mortals and gods.",
+    description:
+      "Exiled to a whispered island, the daughter of Helios sharpens her craft in secret — taming wolves, spinning spells, and Nursing a stranger who staggers from the sea. When her family comes calling, Circe must choose between the immortality she was born to and the mortal hours she has come to love.",
+    availableCopies: 3,
+    waitlist: 1,
   },
   {
     id: "project-hail-mary",
@@ -65,6 +84,10 @@ export const newArrivals: Book[] = [
     year: 2023,
     pages: 482,
     blurb: "One astronaut races against the odds — and time — to save humanity.",
+    description:
+      "Ryland Grace wakes alone on a light-sprung ship with two dead crewmates, no memories, and the fate of the sun resting on his notebook of sketches. Then he hears a knock on the hull. A gleefully clever science thriller that turns astrophysics into a punchline and a prayer.",
+    availableCopies: 5,
+    waitlist: 0,
   },
   {
     id: "braiding-sweetgrass",
@@ -76,6 +99,10 @@ export const newArrivals: Book[] = [
     year: 2024,
     pages: 408,
     blurb: "Indigenous wisdom, plant science and a gift economy of gratitude.",
+    description:
+      "A botanist and member of the Citizen Potawatomi Nation brains lessons from the peonies, the mother trees and the sweetgrass harvest into essays that read like bedtime stories. Braiding Sweetgrass teaches the grammar of reciprocity: how to say thank you to a living earth, and to mean it.",
+    availableCopies: 2,
+    waitlist: 3,
   },
 ];
 
@@ -90,6 +117,10 @@ export const popularBooks: Book[] = [
     year: 2021,
     pages: 416,
     blurb: "A luminous retelling of Troy through devotion, pride and fate.",
+    description:
+      "A forgotten prince is tossed a companion he does not deserve, and grows up gentle, careful, and hopelessly in love. From the classroom to the cave of Chiron to the sand-bruised ranks beneath Troy's walls, Madeline Miller retells the Iliad as a romance of devotion — and of fate's terrible arithmetic.",
+    availableCopies: 4,
+    waitlist: 2,
   },
   {
     id: "evelyn-hugo",
@@ -101,6 +132,10 @@ export const popularBooks: Book[] = [
     year: 2022,
     pages: 400,
     blurb: "A film icon finally tells the truth about her scandalous life.",
+    description:
+      "Monique Grant lands the interview every journalist on earth wants: movie legend Evelyn Hugo, ready to explain her seven marriages at last. What unspools is a history of Old Hollywood stitched together with ambition, grief and one love too dangerous to print — until now.",
+    availableCopies: 6,
+    waitlist: 0,
   },
   {
     id: "pachinko",
@@ -112,6 +147,10 @@ export const popularBooks: Book[] = [
     year: 2023,
     pages: 528,
     blurb: "Four generations of a Korean family strive across a century in Japan.",
+    description:
+      "In 1910s Busan, a fisherman's daughter marries to save her family and follows a new husband to Osaka, where Koreans live in many crowded wards in a country that will never call them home. Pachinko follows Sunja's descendants through war, wealth and pachinko parlours — quiet, devastating, impossible to put down.",
+    availableCopies: 2,
+    waitlist: 4,
   },
   {
     id: "dune",
@@ -123,6 +162,10 @@ export const popularBooks: Book[] = [
     year: 2024,
     pages: 624,
     blurb: "Desert power, prophecy and politics on the spice planet of Arrakis.",
+    description:
+      "The Emperor gives House Atreides the desert planet Arrakis — the only source of spice, the most precious substance in the empire — and it is exactly the trap it looks like. Dune layers ecology, religion and politics into the story of a boy who walks the desert and comes back something else entirely.",
+    availableCopies: 3,
+    waitlist: 1,
   },
   {
     id: "atomic-habits",
@@ -134,6 +177,10 @@ export const popularBooks: Book[] = [
     year: 2024,
     pages: 320,
     blurb: "Tiny changes, remarkable results — a system for better habits.",
+    description:
+      "Forget goals; systems win. James Clear turns behavioural science into a practical toolkit — habit stacking, environment design, the two-minute rule — for building good habits one small, repeatable cue at a time. The rare self-help shelf member that survives the return slot: dog-eared, annotated, and borrowed again.",
+    availableCopies: 5,
+    waitlist: 0,
   },
   {
     id: "midnight-library",
@@ -145,6 +192,10 @@ export const popularBooks: Book[] = [
     year: 2024,
     pages: 304,
     blurb: "Between life and death, a library of every life you might have lived.",
+    description:
+      "Nora Seed, twenty-four hours past her final regret, wakes in a library where every book is a doorway to a version of her life with a different choice made. The rules are simple: make a life worth keeping, or let the book go. Haig builds the whole thing out of kindness — and still lands the gut-punch.",
+    availableCopies: 4,
+    waitlist: 1,
   },
 ];
 

@@ -113,14 +113,17 @@ export default async function BookPage({ params }: PageProps<"/books/[id]">) {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-60" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
                   </span>
-                  3 copies on shelf
+                  {book.availableCopies ?? 3} copies on shelf
                 </span>
               </div>
 
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-ink-muted sm:text-lg">
-                {book.blurb} A homegrown favourite at BookNook — ask our librarians for
-                a reading note when you collect your copy.
-              </p>
+              <div className="mt-6 max-w-xl space-y-4 text-base leading-relaxed text-ink-muted sm:text-lg">
+                <p>
+                  {book.blurb} A homegrown favourite at BookNook — ask our librarians for
+                  a reading note when you collect your copy.
+                </p>
+                {book.description ? <p>{book.description}</p> : null}
+              </div>
 
               <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 rounded-3xl border border-forest/10 bg-cream p-6 shadow-soft sm:grid-cols-3">
                 {shelves.map((item) => (
@@ -134,6 +137,34 @@ export default async function BookPage({ params }: PageProps<"/books/[id]">) {
                   </div>
                 ))}
               </dl>
+
+              {/* Availability */}
+              <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2.5 rounded-2xl border border-gold/40 bg-gold-pale px-5 py-4">
+                <span
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-forest"
+                  aria-hidden="true"
+                >
+                  <span className="relative inline-flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-60" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
+                  </span>
+                  Available now
+                </span>
+                <span className="sr-only">
+                  Availability: available for borrowing right now.
+                </span>
+                <span className="text-xs font-medium text-ink">
+                  {book.availableCopies ?? 3} copies waiting on the shelf
+                </span>
+                {(book.waitlist ?? 0) > 0 ? (
+                  <span className="text-xs font-medium text-ink">
+                    {book.waitlist} readers on the waitlist
+                  </span>
+                ) : null}
+                <span className="text-xs font-medium text-ink-muted">
+                  48-hour hold once reserved
+                </span>
+              </div>
 
               <div className="mt-9 flex flex-wrap items-center gap-4">
                 <BorrowButton />
@@ -165,7 +196,7 @@ export default async function BookPage({ params }: PageProps<"/books/[id]">) {
           </div>
           <div className="mt-12 text-center">
             <Link
-              href="/new-arrivals"
+              href="/books"
               className="font-display inline-flex items-center gap-2 text-lg font-semibold text-forest transition-colors hover:text-gold"
             >
               ← Back to all shelves
