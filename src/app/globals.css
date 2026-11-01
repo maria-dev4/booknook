@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf6ee;
+  --foreground: #1e2a22;
+  --font-playfair: var(--font-playfair); /* populated by next/font in layout.tsx */
 }
 
 @theme inline {
@@ -10,17 +11,52 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-playfair);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  /* Warm ivory */
+  --color-ivory: #faf6ee;
+  --color-ivory-deep: #f2ecdf;
+  --color-cream: #fffdf8;
+
+  /* Deep forest green */
+  --color-forest: #1e3b2a;
+  --color-forest-deep: #142a1d;
+  --color-forest-soft: #2c5639;
+
+  /* Muted gold */
+  --color-gold: #b3903f;
+  --color-gold-soft: #d9c08b;
+  --color-gold-pale: #f0e5cc;
+
+  /* Ink tones */
+  --color-ink: #1e2a22;
+  --color-ink-muted: #5f6b60;
+
+  --shadow-soft: 0 2px 4px rgba(20, 42, 29, 0.04), 0 12px 32px -12px rgba(20, 42, 29, 0.16);
+  --shadow-lift: 0 4px 8px rgba(20, 42, 29, 0.05), 0 24px 48px -16px rgba(20, 42, 29, 0.26);
+  --shadow-card: 0 1px 2px rgba(20, 42, 29, 0.05), 0 16px 40px -12px rgba(20, 42, 29, 0.18);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle selection styling to match the palette */
+::selection {
+  background: #1e3b2a;
+  color: #faf6ee;
+}
+
+/* Hide horizontal scrollbars on cover strips */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
