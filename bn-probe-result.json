@@ -1,0 +1,26 @@
+{
+  "cardCount": 6,
+  "styleSheetCount": 2,
+  "bnRuleFoundInStyleSheet": true,
+  "reducedMotion": false,
+  "scene": {
+    "perspective": "1100px",
+    "transformStyle": "flat"
+  },
+  "bob": {
+    "animationName": "bn-float",
+    "animationDuration": "5.6s",
+    "animationPlayState": "running",
+    "animationDelay": "0s"
+  },
+  "book": {
+    "transform": "matrix(1, 0, 0, 1, 0, 0)",
+    "transition": "0.65s cubic-bezier(0.22, 1, 0.36, 1)",
+    "willChange": "transform"
+  },
+  "ground": {
+    "position": "absolute",
+    "filter": "blur(9px)",
+    "background": "rgba(20, 42, 29, 0.14)"
+  }
+}

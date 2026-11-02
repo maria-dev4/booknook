@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { navLinks } from "@/lib/data";
-import { CloseIcon, LogoMark, MenuIcon } from "@/components/icons";
+import { CloseIcon, MenuIcon } from "@/components/icons";
+import Image from "next/image";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -27,17 +28,15 @@ export function Navbar() {
       }`}
     >
       <div className="mx-auto flex h-[4.5rem] w-full max-w-7xl items-center justify-between px-5 sm:px-8">
-        {/* Brand */}
         <Link href="/" className="group flex items-center gap-3" onClick={closeMenu}>
-          <LogoMark className="h-10 w-10 transition-transform duration-300 group-hover:-rotate-6" />
-          <span className="flex flex-col leading-none">
-            <span className="font-display text-xl font-semibold tracking-tight text-forest">
-              Book<span className="text-gold italic">Nook</span>
-            </span>
-            <span className="mt-1 text-[0.6rem] font-medium uppercase tracking-[0.28em] text-ink-muted">
-              Modern Library
-            </span>
-          </span>
+          <Image
+  src="/logo.png"
+  alt="BookNook - Modern Library"
+  width={280}
+  height={260}
+  priority
+  className="h-30 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+/>
         </Link>
 
         {/* Desktop nav */}
@@ -79,6 +78,7 @@ export function Navbar() {
         >
           {open ? <CloseIcon /> : <MenuIcon />}
         </button>
+
       </div>
 
       {/* Mobile menu */}

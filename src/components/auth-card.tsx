@@ -31,15 +31,7 @@ export function AuthCard({ variant }: { variant: "login" | "register" }) {
           />
 
           <div className="relative flex items-center gap-3">
-            <LogoMark className="h-10 w-10" />
-            <span className="flex flex-col leading-none">
-              <span className="font-display text-xl font-semibold tracking-tight text-ivory">
-                Book<span className="text-gold-soft italic">Nook</span>
-              </span>
-              <span className="mt-1 text-[0.6rem] font-medium uppercase tracking-[0.28em] text-ivory/50">
-                Modern Library
-              </span>
-            </span>
+            <LogoMark className="h-11" onDark />
           </div>
 
           <div className="relative">

@@ -1,26 +1,28 @@
+import Image from "next/image";
 import type { SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
-export function LogoMark({ className = "h-9 w-9" }: { className?: string }) {
-  return (
-    <span
-      className={`${className} inline-flex items-center justify-center rounded-xl bg-forest text-ivory shadow-soft`}
-    >
-      <svg viewBox="0 0 24 24" fill="none" className="h-1/2 w-1/2" aria-hidden="true">
-        <path
-          d="M4 5.5C4 4.67 4.67 4 5.5 4H10c1.1 0 2 .9 2 2v13c0-.55-.45-1-1-1H5.5C4.67 18 4 17.33 4 16.5v-11Z"
-          fill="currentColor"
-        />
-        <path
-          d="M20 5.5C20 4.67 19.33 4 18.5 4H14c-1.1 0-2 .9-2 2v13c0-.55.45-1 1-1h5.5c.83 0 1.5-.67 1.5-1.5v-11Z"
-          fill="currentColor"
-          opacity="0.55"
-        />
-        <path d="M9.5 8h-2.6M9.5 11h-2.6M17.1 8h-2.6M17.1 11h-2.6" stroke="#1e3b2a" strokeWidth="1.4" strokeLinecap="round" opacity="0.9" />
-      </svg>
-    </span>
+export function LogoMark({
+  className = "h-9",
+  onDark = false,
+}: {
+  className?: string;
+  /** Set when the logo sits on deep-green surfaces so the artwork keeps its contrast. */
+  onDark?: boolean;
+}) {
+  const image = (
+    <Image
+      src="/logo.png"
+      alt="BookNook"
+      width={1536}
+      height={1024}
+      className={`${className} w-auto`}
+    />
   );
+
+  if (!onDark) return image;
+  return <span className="inline-flex rounded-2xl bg-ivory p-1.5 shadow-soft">{image}</span>;
 }
 
 export function StarIcon({ className = "h-4 w-4" }: IconProps) {
