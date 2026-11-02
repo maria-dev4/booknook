@@ -63,3 +63,164 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ---------------------------------------------------------------------------
+   BookCard — premium 3D floating cover
+   Scene (perspective) -> bob (idle float) -> book (pointer tilt) -> layers.
+   All transforms share one declaration so hover lift, depth and tilt compose.
+   No transform:rotateX/rotateY per face — only translated layers, which keeps
+   rendering stable across browsers. backdrop-filter is banned inside this tree
+   (it flattens preserve-3d contexts).
+--------------------------------------------------------------------------- */
+
+@keyframes bn-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.bn-scene {
+  perspective: 1100px;
+  perspective-origin: 50% 42%;
+}
+
+.bn-bob {
+  transform-style: preserve-3d;
+  animation: bn-float 5.6s ease-in-out infinite;
+}
+
+.bn-book {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform: translate3d(0, var(--bn-fy, 0px), var(--bn-fz, 0px))
+    rotateX(var(--bn-rx, 0deg)) rotateY(var(--bn-ry, 0deg));
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Fast, weightless follow while the pointer is over the cover */
+.bn-book.bn-live {
+  transition-duration: 0.12s;
+  transition-timing-function: ease-out;
+}
+
+.bn-book:hover {
+  --bn-fy: -10px;
+  --bn-fz: 22px;
+}
+
+/* Layers */
+.bn-slab {
+  transform: translateZ(-14px);
+}
+
+.bn-badge {
+  transform: translateZ(22px);
+}
+
+.bn-veil {
+  transform: translateZ(24px) translateY(18px);
+  opacity: 0;
+  transition:
+    opacity 0.35s ease,
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bn-book:hover .bn-veil,
+.bn-book:focus-within .bn-veil {
+  opacity: 1;
+  transform: translateZ(24px) translateY(0);
+}
+
+.bn-face {
+  box-shadow:
+    0 1px 2px rgba(20, 42, 29, 0.1),
+    0 14px 26px -12px rgba(20, 42, 29, 0.28),
+    0 34px 60px -26px rgba(20, 42, 29, 0.26);
+  transition: box-shadow 0.55s ease;
+}
+
+.bn-book:hover .bn-face {
+  box-shadow:
+    0 2px 3px rgba(20, 42, 29, 0.08),
+    0 22px 40px -14px rgba(20, 42, 29, 0.34),
+    0 56px 90px -34px rgba(20, 42, 29, 0.36);
+}
+
+/* Pointer-tracked gloss — position driven by --bn-sx/--bn-sy */
+.bn-sheen {
+  background-image: radial-gradient(
+    140% 100% at var(--bn-sx, 64%) var(--bn-sy, 0%),
+    rgba(255, 251, 240, 0.32),
+    rgba(255, 251, 240, 0.06) 42%,
+    transparent 72%
+  );
+  opacity: 0.5;
+  transition: opacity 0.5s ease;
+}
+
+.bn-book:hover .bn-sheen,
+.bn-book:focus-within .bn-sheen {
+  opacity: 1;
+}
+
+/* Floating-contact shadow under the cover */
+.bn-ground {
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 70%;
+  height: 14px;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: rgba(20, 42, 29, 0.14);
+  filter: blur(9px);
+  opacity: 0.55;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.bn-scene:hover .bn-ground {
+  opacity: 0.8;
+  bottom: -12px;
+  height: 11px;
+  transform: translateX(-50%) scale(1.12);
+}
+
+/* Keyboard focus: presentational pose + gold ring on the cover */
+[data-bn-book]:focus-within {
+  --bn-fy: -8px;
+  --bn-fz: 16px;
+  --bn-rx: 4deg;
+  --bn-ry: -11deg;
+}
+
+.bn-book:focus-visible .bn-face {
+  outline: 2px solid #b3903f;
+  outline-offset: 3px;
+}
+
+/* Desynchronise the idle float across the grid */
+.group:nth-child(3n + 2) .bn-bob {
+  animation-delay: -1.4s;
+}
+.group:nth-child(3n + 3) .bn-bob {
+  animation-delay: -2.75s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bn-bob {
+    animation: none;
+  }
+  .bn-book {
+    transition: none;
+  }
+  .bn-veil,
+  .bn-sheen,
+  .bn-ground {
+    transition: none;
+  }
+}
