@@ -1,19 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 export function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     if (!isPending && !session) {
-      router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      const path = window.location.pathname;
+      router.replace(`/login?redirect=${encodeURIComponent(path)}`);
     }
-  }, [isPending, session, pathname, router]);
+  }, [isPending, session, router]);
 
   if (isPending || !session) {
     return (
