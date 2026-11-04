@@ -31,7 +31,7 @@ export default function AllBooksPage() {
       {books.length === 0 ? (
         <p className="mt-10 text-ink-muted">No books have been added yet.</p>
       ) : (
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {books.map((book) => (
             <BookListCard key={book._id} book={book} />
           ))}

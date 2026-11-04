@@ -26,6 +26,13 @@ const handleLogout = async () => {
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  /*
+   * Profile image fallback: the saved Photo URL may be missing, unreachable
+   * or a non-image link (e.g. an imgbb share page, which returns HTML).
+   * Failure is tracked per URL, so a new image URL is re-tried automatically
+   * after re-login or profile changes — no effect needed.
+   */
+  const [avatarFailedFor, setAvatarFailedFor] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -35,6 +42,8 @@ const handleLogout = async () => {
   }, []);
 
   const links = user ? [...publicLinks, ...privateLinks] : publicLinks;
+  const imageUrl = user?.image;
+  const avatarFailed = imageUrl != null && avatarFailedFor === imageUrl;
   const closeAll = () => {
     setOpen(false);
     setMenuOpen(false);
@@ -83,7 +92,9 @@ const handleLogout = async () => {
                 className="h-11 w-11 overflow-hidden rounded-full border-2 border-gold"
               >
                 <img
-                  src={user.image || "/avatar.svg"}
+                  key={imageUrl || "fallback"}
+                  src={imageUrl && !avatarFailed ? imageUrl : "/avatar.svg"}
+                  onError={() => setAvatarFailedFor(imageUrl ?? null)}
                   alt={user.name}
                   className="h-full w-full object-cover"
                 />

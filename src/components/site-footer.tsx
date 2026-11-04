@@ -43,7 +43,7 @@ function SocialLink({
 export function SiteFooter() {
   return (
     <footer className="relative overflow-hidden bg-forest-deep text-ivory">
-      {/* Decorative glow */}
+     
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -right-32 -top-32 h-80 w-80 rounded-full bg-gold/10 blur-3xl"
@@ -57,9 +57,13 @@ export function SiteFooter() {
         <div className="grid gap-12 lg:grid-cols-[1.4fr_0.8fr_0.8fr_1.2fr]">
           {/* Brand */}
           <div>
-            <Link href="/" className="flex items-center gap-3">
-              <LogoMark className="h-28 w-auto object-contain transition-transform duration-300 group-hover:scale-105" onDark />
-            </Link>
+
+<Link href="/" className="flex items-center gap-3">
+  <LogoMark
+    className="h-20 w-auto object-contain transition-transform duration-300"
+    onDark
+  />
+</Link>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-ivory/60">
               A community library reimagined — meticulously curated shelves, seamless borrowing,
               and a warm corner of the internet for people who still love paper.

@@ -4,7 +4,7 @@ import { popularBooks } from "@/lib/data";
 import { Stars } from "@/components/stars";
 import { BookmarkIcon } from "@/components/icons";
 
-const borrows: Record<string, number> = {
+export const borrows: Record<string, number> = {
   "song-achilles": 168,
   "evelyn-hugo": 154,
   pachinko: 141,

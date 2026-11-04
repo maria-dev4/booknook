@@ -1,56 +1,74 @@
 "use client";
-
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, EffectFade } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
+import "swiper/css";
+import "swiper/css/effect-fade";
 import { heroSlides } from "@/lib/data";
 import { ArrowIcon, ChevronIcon, StarIcon } from "@/components/icons";
 
-const AUTOPLAY_MS = 6500;
+const clientSnapshot = () => true;
+const serverSnapshot = () => false;
+const noopSubscribe = () => () => {};
+
+/**
+ * Returns false during SSR/prerender and true after client hydration,
+ * without a setState-in-effect (React Compiler friendly).
+ */
+function useMounted() {
+  return useSyncExternalStore(noopSubscribe, clientSnapshot, serverSnapshot);
+}
 
 export function HeroCarousel() {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const go = useCallback((next: number) => {
-    setActive(((next % heroSlides.length) + heroSlides.length) % heroSlides.length);
-  }, []);
-
-  useEffect(() => {
-    if (paused) return;
-    timer.current = setInterval(() => {
-      setActive((current) => (current + 1) % heroSlides.length);
-    }, AUTOPLAY_MS);
-    return () => {
-      if (timer.current) clearInterval(timer.current);
-    };
-  }, [paused]);
+  const [swiper, setSwiper] = useState<SwiperType | null>(null);
+  /*
+   * Safe client-side mounting: Swiper's Autoplay module reads `new Date()`
+   * during instance initialization, which Next 16 rejects on a prerendered
+   * route ("unstable value in a Client Component"). Swiper is therefore only
+   * mounted after hydration; SSR serves the static first slide instead.
+   */
+  const mounted = useMounted();
 
   return (
-    <section id="home" aria-roledescription="carousel" aria-label="Featured collections">
+    <section
+      id="home"
+      aria-roledescription="carousel"
+      aria-label="Featured collections"
+    >
       <div className="mx-auto w-full max-w-7xl px-5 pt-6 sm:px-8 sm:pt-10">
-        <div
-          className="relative overflow-hidden rounded-[2rem] shadow-card sm:rounded-[2.75rem]"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-        >
-          {heroSlides.map((s, index) => (
-            <div
-              key={s.id}
-              aria-hidden={index !== active}
-              className={`transition-opacity duration-700 ease-out ${
-                index === active ? "opacity-100" : "pointer-events-none absolute inset-0 opacity-0"
-              }`}
+        <div className="relative overflow-hidden rounded-[2rem] shadow-card sm:rounded-[2.75rem]">
+          {mounted ? (
+            <Swiper
+              modules={[Autoplay, EffectFade]}
+              effect="fade"
+              fadeEffect={{ crossFade: true }}
+              loop
+              speed={700}
+              autoplay={{
+                delay: 6500,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              onSwiper={setSwiper}
+              onSlideChange={(s) => setActive(s.realIndex)}
             >
-              <SlideHeroInner slide={s} />
-            </div>
-          ))}
+              {heroSlides.map((s) => (
+                <SwiperSlide key={s.id}>
+                  <SlideHeroInner slide={s} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <SlideHeroInner slide={heroSlides[0]} />
+          )}
 
-          {/* Arrows */}
           <button
             type="button"
-            onClick={() => go(active - 1)}
+            onClick={() => swiper?.slidePrev()}
             aria-label="Previous slide"
             className="absolute left-4 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-forest/15 bg-cream/85 text-forest shadow-soft backdrop-blur transition-all hover:bg-cream hover:shadow-lift sm:inline-flex"
           >
@@ -58,20 +76,19 @@ export function HeroCarousel() {
           </button>
           <button
             type="button"
-            onClick={() => go(active + 1)}
+            onClick={() => swiper?.slideNext()}
             aria-label="Next slide"
             className="absolute right-4 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-forest/15 bg-cream/85 text-forest shadow-soft backdrop-blur transition-all hover:bg-cream hover:shadow-lift sm:inline-flex"
           >
             <ChevronIcon className="h-5 w-5" />
           </button>
 
-          {/* Progress dots */}
           <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2.5">
             {heroSlides.map((s, index) => (
               <button
                 key={s.id}
                 type="button"
-                onClick={() => go(index)}
+                onClick={() => swiper?.slideToLoop(index)}
                 aria-label={`Go to slide ${index + 1}`}
                 aria-current={index === active}
                 className={`h-2 rounded-full transition-all duration-500 ${
@@ -84,7 +101,6 @@ export function HeroCarousel() {
           </div>
         </div>
 
-        {/* Ticker strip */}
         <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 md:grid-cols-4">
           {[
             { stat: "3,000+", label: "Curated titles" },
@@ -96,7 +112,9 @@ export function HeroCarousel() {
               key={item.label}
               className="rounded-2xl border border-forest/10 bg-cream px-5 py-4 text-center shadow-soft sm:py-5"
             >
-              <p className="font-display text-2xl font-semibold text-forest sm:text-3xl">{item.stat}</p>
+              <p className="font-display text-2xl font-semibold text-forest sm:text-3xl">
+                {item.stat}
+              </p>
               <p className="mt-1 text-xs font-medium uppercase tracking-[0.18em] text-ink-muted">
                 {item.label}
               </p>
@@ -150,7 +168,9 @@ function SlideHeroInner({ slide }: { slide: (typeof heroSlides)[number] }) {
           };
 
   return (
-    <div className={`relative grid gap-10 px-7 py-14 sm:px-12 sm:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-6 lg:px-20 lg:py-0 ${theme.wrap}`}>
+    <div
+      className={`relative grid gap-10 px-7 py-14 sm:px-12 sm:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-6 lg:px-20 lg:py-0 ${theme.wrap}`}
+    >
       {/* Photographic backdrop (book-themed slide) */}
       {slide.background ? (
         <div aria-hidden="true" className="absolute inset-0">
@@ -180,7 +200,9 @@ function SlideHeroInner({ slide }: { slide: (typeof heroSlides)[number] }) {
 
       {/* Copy */}
       <div className="relative z-10 lg:py-24">
-        <p className={`text-xs font-semibold uppercase tracking-[0.3em] ${theme.eyebrow}`}>
+        <p
+          className={`text-xs font-semibold uppercase tracking-[0.3em] ${theme.eyebrow}`}
+        >
           {slide.eyebrow}
         </p>
         <h1 className="font-display mt-4 text-[2.1rem] font-semibold leading-[1.15] sm:text-5xl lg:text-[3.4rem]">
@@ -192,23 +214,20 @@ function SlideHeroInner({ slide }: { slide: (typeof heroSlides)[number] }) {
 
         <div className="mt-8 flex flex-wrap items-center gap-3.5">
           <Link
-            href={slide.ctaHref}
+            href="/books"
             className={`inline-flex items-center gap-2.5 rounded-full px-6 py-3 text-sm font-semibold shadow-soft transition-all duration-300 hover:shadow-lift ${theme.primary}`}
           >
-            {slide.cta}
+            Browse Books
             <ArrowIcon className="h-4 w-4" />
-          </Link>
-          <Link
-            href="/how-it-works"
-            className={`inline-flex items-center rounded-full border px-6 py-3 text-sm font-semibold transition-colors duration-300 ${theme.secondary}`}
-          >
-            How borrowing works
           </Link>
         </div>
 
-        <p className={`mt-9 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] ${theme.meta}`}>
+        <p
+          className={`mt-9 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] ${theme.meta}`}
+        >
           <StarIcon className="h-3.5 w-3.5 text-gold" />
-          Rated {slide.book.rating.toFixed(1)}/5 · {slide.book.genre} · {slide.book.pages} pages
+          Rated {slide.book.rating.toFixed(1)}/5 · {slide.book.genre} ·{" "}
+          {slide.book.pages} pages
         </p>
       </div>
 

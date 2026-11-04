@@ -23,7 +23,7 @@ export function SocialButton({ provider }: { provider: Provider }) {
     <button
       type="button"
       onClick={handleClick}
-      className="flex w-full items-center justify-center gap-3 rounded-full border border-forest/20 bg-white px-5 py-3 text-sm font-semibold text-forest transition-colors hover:bg-forest/5"
+      className="flex w-full items-center justify-center gap-3 rounded-full border border-forest/15 bg-white px-5 py-3 text-sm font-semibold text-ink shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-forest/30 hover:shadow-lift active:translate-y-0"
     >
       {provider === "google" ? (
         <svg width="18" height="18" viewBox="0 0 48 48">

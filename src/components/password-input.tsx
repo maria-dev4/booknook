@@ -5,26 +5,30 @@ import { useState } from "react";
 export function PasswordInput({
   name = "password",
   placeholder = "Password",
+  id,
 }: {
   name?: string;
   placeholder?: string;
+  id?: string;
 }) {
   const [show, setShow] = useState(false);
 
   return (
     <div className="relative">
       <input
+        id={id}
         name={name}
         type={show ? "text" : "password"}
         required
         placeholder={placeholder}
-        className="w-full rounded-xl border border-forest/15 px-4 py-3 pr-12 text-sm outline-none focus:border-gold"
+        autoComplete={name === "password" ? "new-password" : "current-password"}
+        className="w-full rounded-xl border border-forest/15 bg-cream px-4 py-3 pr-12 text-sm text-ink outline-none transition-all duration-200 hover:border-forest/30 focus:border-gold focus:bg-white focus:ring-4 focus:ring-gold/15"
       />
       <button
         type="button"
         onClick={() => setShow((v) => !v)}
         aria-label={show ? "Hide password" : "Show password"}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted transition-colors hover:text-forest"
+        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-ink-muted transition-all duration-200 hover:bg-forest/5 hover:text-forest"
       >
         {show ? (
           <svg

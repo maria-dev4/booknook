@@ -132,18 +132,18 @@ body {
   border-radius: 6px 14px 14px 6px;
   overflow: hidden;
   box-shadow:
-    0 1px 2px rgba(20, 42, 29, 0.14),
-    0 16px 30px -14px rgba(20, 42, 29, 0.32),
-    0 38px 64px -28px rgba(20, 42, 29, 0.3);
+    0 2px 4px rgba(20, 42, 29, 0.16),
+    0 20px 36px -14px rgba(20, 42, 29, 0.36),
+    0 50px 84px -28px rgba(20, 42, 29, 0.38);
   transition: box-shadow 0.55s ease;
 }
 
 .bn-book:hover .bn-face,
 .bn-book:focus-visible .bn-face {
   box-shadow:
-    0 2px 3px rgba(20, 42, 29, 0.1),
-    0 24px 40px -16px rgba(20, 42, 29, 0.4),
-    0 56px 92px -34px rgba(20, 42, 29, 0.38);
+    0 3px 5px rgba(20, 42, 29, 0.12),
+    0 28px 48px -16px rgba(20, 42, 29, 0.42),
+    0 66px 106px -36px rgba(20, 42, 29, 0.4);
 }
 
 /* Bookcloth spine — hinged 90deg on the left edge, spanning the 18px block */
@@ -193,6 +193,18 @@ body {
     linear-gradient(90deg, #c9bfa4, #ece5d1 58%, #f7f1e1);
 }
 
+/* Compact card variant — thinner spine and page block for smaller covers */
+.bn-sm .bn-spine {
+  width: 14px;
+  transform: rotateY(-90deg) translateX(-7px);
+}
+
+.bn-sm .bn-pages {
+  bottom: -14px;
+  height: 14px;
+  transform: rotateX(-90deg) translateY(-7px);
+}
+
 /* Pointer-tracked gloss — position driven by --bn-sx/--bn-sy */
 .bn-sheen {
   background-image: radial-gradient(
@@ -215,23 +227,23 @@ body {
   position: absolute;
   left: 50%;
   bottom: -10px;
-  width: 78%;
-  height: 16px;
+  width: 84%;
+  height: 17px;
   transform: translateX(-50%);
   border-radius: 9999px;
-  background: rgba(20, 42, 29, 0.16);
-  filter: blur(10px);
-  opacity: 0.6;
+  background: rgba(20, 42, 29, 0.18);
+  filter: blur(11px);
+  opacity: 0.72;
   transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
 }
 
 .bn-scene:hover .bn-ground,
 .bn-scene:focus-within .bn-ground {
-  opacity: 0.85;
-  bottom: -13px;
-  height: 12px;
-  transform: translateX(-50%) scale(1.1);
+  opacity: 0.9;
+  bottom: -14px;
+  height: 13px;
+  transform: translateX(-50%) scale(1.12);
 }
 
 /* Keyboard focus: lifted pose + gold ring on the cover plane */
@@ -263,5 +275,30 @@ body {
   .bn-face,
   .bn-ground {
     transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Auth pages — subtle card entrance animation
+--------------------------------------------------------------------------- */
+
+@keyframes auth-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-rise {
+  animation: auth-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-rise {
+    animation: none;
   }
 }

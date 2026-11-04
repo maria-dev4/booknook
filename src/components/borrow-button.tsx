@@ -16,7 +16,7 @@ export function BorrowButton() {
       }`}
     >
       <BookmarkIcon className="h-4 w-4" />
-      {reserved ? "Reserved for 48 hrs — Cancel" : "Borrow this book"}
+      {reserved ? "Reserved for 48 hrs - Cancel" : "Borrow this book"}
     </button>
   );
 }

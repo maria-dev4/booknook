@@ -20,8 +20,16 @@ export function NewArrivals() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8">
-      <h2 className="font-display text-4xl text-forest">New arrivals this month</h2>
-      <p className="mt-2 max-w-xl text-ink-muted">
+      <div className="flex items-center gap-4">
+        <span
+          aria-hidden="true"
+          className="h-px w-10 shrink-0 rounded-full bg-gold/50"
+        />
+        <h2 className="font-display text-3xl font-semibold leading-[1.15] text-forest sm:text-4xl">
+          <span className="italic text-gold">New arrivals</span> this month
+        </h2>
+      </div>
+      <p className="mt-3 max-w-xl text-[0.95rem] leading-relaxed text-ink-muted/90">
         The latest books added by our readers, fresh on the shelves.
       </p>
 
@@ -30,7 +38,7 @@ export function NewArrivals() {
       ) : books.length === 0 ? (
         <p className="mt-10 text-ink-muted">No books have been added yet.</p>
       ) : (
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {books.map((book) => (
             <BookListCard key={book._id} book={book} />
           ))}

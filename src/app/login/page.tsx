@@ -5,6 +5,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 import { SocialButton } from "@/components/social-button";
+import { AuthShell, authInput, authLabel } from "@/components/auth-shell";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -34,62 +35,85 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="mx-auto flex min-h-[70vh] w-full max-w-md items-center px-5 py-12">
-      <div className="w-full rounded-3xl border border-forest/10 bg-white p-8 shadow-soft">
-        <h1 className="font-display text-3xl text-forest">Welcome back</h1>
-        <p className="mt-2 text-sm text-ink-muted">
-          Login to borrow and manage your books.
+    <AuthShell>
+      <div className="mt-6 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold">
+          Member Access
         </p>
+        <h1 className="font-display mt-2 text-3xl font-semibold leading-tight text-forest sm:text-4xl">
+          Welcome back
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+          Log in to borrow, reserve and manage your books.
+        </p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+        <div className="space-y-1.5">
+          <label htmlFor="login-email" className={authLabel}>
+            Email Address
+          </label>
           <input
+            id="login-email"
             name="email"
             type="email"
             required
-            placeholder="Email address"
-            className="w-full rounded-xl border border-forest/15 px-4 py-3 text-sm outline-none focus:border-gold"
+            autoComplete="email"
+            placeholder="you@example.com"
+            className={authInput}
           />
+        </div>
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <label htmlFor="login-password" className={authLabel}>
+              Password
+            </label>
+            <button
+              type="button"
+              onClick={() => toast("Password reset is not available yet")}
+              className="text-xs font-semibold text-forest transition-colors hover:text-gold"
+            >
+              Forgot password?
+            </button>
+          </div>
           <input
+            id="login-password"
             name="password"
             type="password"
             required
-            placeholder="Password"
-            className="w-full rounded-xl border border-forest/15 px-4 py-3 text-sm outline-none focus:border-gold"
+            autoComplete="current-password"
+            placeholder="Your password"
+            className={authInput}
           />
-          <button
-            type="button"
-            onClick={() => toast("Password reset is not available yet")}
-            className="text-sm font-medium text-forest hover:text-gold"
-          >
-            Forgot password?
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-full bg-forest px-5 py-3 text-sm font-semibold text-ivory transition-colors hover:bg-forest-deep disabled:opacity-60"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
-        <div className="my-5 flex items-center gap-3 text-xs text-ink-muted">
-          <span className="h-px flex-1 bg-forest/15" />
-          or
-          <span className="h-px flex-1 bg-forest/15" />
         </div>
-        <div className="space-y-3">
-          <SocialButton provider="google" />
-        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="inline-flex w-full items-center justify-center rounded-full bg-forest px-6 py-3 text-sm font-semibold text-ivory shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:bg-forest-deep hover:shadow-lift active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:-translate-y-0"
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
 
-        <p className="mt-6 text-center text-sm text-ink-muted">
-          New to BookNook?{" "}
-          <Link
-            href="/register"
-            className="font-semibold text-forest hover:text-gold"
-          >
-            Register
-          </Link>
-        </p>
+      <div className="my-6 flex items-center gap-3 text-xs font-medium text-ink-muted">
+        <span className="h-px flex-1 bg-forest/15" />
+        or continue with
+        <span className="h-px flex-1 bg-forest/15" />
       </div>
-    </main>
+
+      <div className="space-y-3">
+        <SocialButton provider="google" />
+      </div>
+
+      <p className="mt-7 text-center text-sm text-ink-muted">
+        New to BookNook?{" "}
+        <Link
+          href="/register"
+          className="font-semibold text-forest transition-colors hover:text-gold"
+        >
+          Create an account
+        </Link>
+      </p>
+    </AuthShell>
   );
 }
