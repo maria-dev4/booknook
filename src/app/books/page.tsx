@@ -1,26 +1,42 @@
-import type { Metadata } from "next";
-import { allBooks } from "@/lib/data";
-import { SectionHeading } from "@/components/section-heading";
-import { BooksExplorer } from "@/components/books-explorer";
-import { CtaBand } from "@/components/cta-band";
+"use client";
 
-export const metadata: Metadata = { title: "All Books" };
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { BookListCard } from "@/components/book-list-card";
+import { Spinner } from "@/components/spinner";
+import { apiFetch } from "@/lib/api";
+import type { Book } from "@/lib/types";
 
-export default function BooksPage() {
+export default function AllBooksPage() {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    document.title = "BookNook | All Books";
+    apiFetch("/books")
+      .then(setBooks)
+      .catch(() => toast.error("Could not load books"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <Spinner />;
+
   return (
-    <main className="flex-1">
-      <section className="bg-ivory py-16 sm:py-24">
-        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
-          <SectionHeading
-            eyebrow="The Whole Collection"
-            title="All books on our shelves"
-            highlight="our shelves"
-            description="Every title in the Nook, from sunlit fiction to midnight sci-fi. Search by name, filter by category, and sort the shelves your way."
-          />
-          <BooksExplorer books={allBooks} />
+    <main className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8">
+      <h1 className="font-display text-4xl text-forest">All Books</h1>
+      <p className="mt-2 text-ink-muted">
+        Browse every book shared by our readers.
+      </p>
+
+      {books.length === 0 ? (
+        <p className="mt-10 text-ink-muted">No books have been added yet.</p>
+      ) : (
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {books.map((book) => (
+            <BookListCard key={book._id} book={book} />
+          ))}
         </div>
-      </section>
-      <CtaBand />
+      )}
     </main>
   );
 }

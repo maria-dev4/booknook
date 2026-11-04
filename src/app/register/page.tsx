@@ -40,9 +40,10 @@ export default function RegisterPage() {
     setLoading(false);
 
     if (authError) {
-      toast.error(authError.message || "Registration failed");
-      return;
-    }
+  console.log(authError);
+  toast.error(authError.message || `Registration failed (${authError.status})`);
+  return;
+}
     toast.success("Registration successful. Please login.");
     router.push("/login");
   };

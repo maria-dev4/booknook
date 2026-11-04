@@ -1,4 +1,5 @@
 import { newArrivals } from "@/lib/data";
+import { NewArrivals } from "@/components/new-arrivals";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { BookCard } from "@/components/book-card";
 import { SectionHeading } from "@/components/section-heading";

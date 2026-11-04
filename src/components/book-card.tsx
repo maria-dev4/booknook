@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { Book } from "@/lib/data";
+import { Stars } from "@/components/stars";
 
-const MAX_TILT = { rx: 8, ry: 12 };
+const POSE = { rx: 4, ry: 14 };
+const MAX_TILT = { rx: 7, ry: 9 };
 
 const CSS_VARS = ["--bn-rx", "--bn-ry", "--bn-sx", "--bn-sy"] as const;
 
@@ -28,8 +30,8 @@ export function BookCard({ book }: { book: Book }) {
     const py = (event.clientY - rect.top) / rect.height - 0.5;
 
     cover.classList.add("bn-live");
-    cover.style.setProperty("--bn-ry", `${(px * MAX_TILT.ry).toFixed(2)}deg`);
-    cover.style.setProperty("--bn-rx", `${(-py * MAX_TILT.rx).toFixed(2)}deg`);
+    cover.style.setProperty("--bn-ry", `${(POSE.ry + px * MAX_TILT.ry).toFixed(2)}deg`);
+    cover.style.setProperty("--bn-rx", `${(POSE.rx - py * MAX_TILT.rx).toFixed(2)}deg`);
     cover.style.setProperty("--bn-sx", `${((px + 0.5) * 100).toFixed(1)}%`);
     cover.style.setProperty("--bn-sy", `${((py + 0.5) * 100).toFixed(1)}%`);
   };
@@ -44,30 +46,28 @@ export function BookCard({ book }: { book: Book }) {
             onPointerMove={handlePointerMove}
             onPointerLeave={(event) => restPose(event.currentTarget)}
             onPointerCancel={(event) => restPose(event.currentTarget)}
-            className="bn-book group/bn relative block aspect-[2/3] [--bn-rx:2.5deg] [--bn-ry:-10deg] focus-visible:outline-none"
+            className="bn-book group/bn relative block aspect-[2/3] focus-visible:outline-none"
           >
-            <div
-              aria-hidden="true"
-              className="bn-slab pointer-events-none absolute top-[3px] bottom-[3px] left-[10px] -right-[3px] rounded-[3px] bg-cream shadow-[0_14px_26px_-16px_rgba(20,42,29,0.5)] [background-image:repeating-linear-gradient(90deg,rgba(30,42,34,0.06)_0px_1px,transparent_1px_4px),linear-gradient(90deg,#c9bfa4,#ece5d1_58%,#f7f1e1)]"
-            />
+            <div aria-hidden="true" className="bn-pages" />
+            <div aria-hidden="true" className="bn-spine" />
 
-            <div className="bn-face absolute inset-0 overflow-hidden rounded-[10px] bg-ivory-deep">
+            <div className="bn-face">
               <Image
                 src={book.cover}
                 alt={`${book.title} book cover by ${book.author}`}
                 fill
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
-                className="object-cover transition-transform duration-700 ease-out group-hover/bn:scale-[1.055]"
+                className="object-cover transition-transform duration-700 ease-out group-hover/bn:scale-[1.04]"
               />
               <div
                 aria-hidden="true"
-                className="absolute inset-y-0 left-0 w-[10%] bg-[linear-gradient(90deg,rgba(10,22,15,0.5),rgba(10,22,15,0.18)_52%,rgba(10,22,15,0)_100%)]"
+                className="pointer-events-none absolute inset-y-0 left-0 w-[13%] bg-[linear-gradient(90deg,rgba(8,18,12,0.42),rgba(8,18,12,0.14)_45%,rgba(8,18,12,0)_100%)]"
               />
               <div
                 aria-hidden="true"
-                className="absolute inset-y-0 left-[10%] w-px bg-gold-soft/40"
+                className="pointer-events-none absolute inset-y-0 left-[13%] w-px bg-gold-soft/40"
               />
-              <div aria-hidden="true" className="bn-sheen absolute inset-0" />
+              <div aria-hidden="true" className="bn-sheen pointer-events-none absolute inset-0" />
             </div>
           </Link>
         </div>
@@ -76,15 +76,19 @@ export function BookCard({ book }: { book: Book }) {
       </div>
 
       <div className="flex flex-1 flex-col px-1 pt-4">
-        <h3 className="font-display text-[1.05rem] font-semibold leading-snug text-forest">
+        <span className="inline-block w-fit rounded-full bg-gold-pale px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-forest">
+          {book.genre}
+        </span>
+        <h3 className="font-display mt-2 text-[1.05rem] font-semibold leading-snug text-forest">
           <Link href={`/books/${book.id}`} className="transition-colors hover:text-gold">
             {book.title}
           </Link>
         </h3>
         <p className="mt-1 text-sm text-ink-muted">{book.author}</p>
-        <span className="mt-3 inline-block w-fit rounded-full border border-gold/30 bg-gold-pale px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-forest">
-          {book.genre}
-        </span>
+        <div className="mt-auto flex items-center justify-between pt-3">
+          <Stars rating={book.rating} />
+          <span className="text-xs font-medium text-ink-muted">{book.pages} pages</span>
+        </div>
       </div>
     </article>
   );

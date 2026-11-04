@@ -65,12 +65,12 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   BookCard — premium 3D floating cover
-   Scene (perspective) -> bob (idle float) -> book (pointer tilt) -> layers.
-   All transforms share one declaration so hover lift, depth and tilt compose.
-   No transform:rotateX/rotateY per face — only translated layers, which keeps
-   rendering stable across browsers. backdrop-filter is banned inside this tree
-   (it flattens preserve-3d contexts).
+   BookCard — realistic 3D hardcover
+   Scene (perspective) -> bob (idle float) -> book solid: front cover plane,
+   cloth spine plane (left) and stacked-page plane (bottom) share one
+   preserve-3d context so depth, shading and shadows read as one object.
+   Pointer tilt writes --bn-rx/--bn-ry; the sheen tracks --bn-sx/--bn-sy.
+   backdrop-filter is banned inside this tree (it flattens preserve-3d).
 --------------------------------------------------------------------------- */
 
 @keyframes bn-float {
@@ -85,7 +85,12 @@ body {
 
 .bn-scene {
   perspective: 1100px;
-  perspective-origin: 50% 42%;
+  perspective-origin: 50% 40%;
+}
+
+.bn-scene:hover,
+.bn-scene:focus-within {
+  z-index: 20;
 }
 
 .bn-bob {
@@ -94,11 +99,16 @@ body {
 }
 
 .bn-book {
+  --bn-rx: 4deg;
+  --bn-ry: 14deg;
+  --bn-rz: -1.5deg;
+  --bn-fy: 0px;
+  --bn-fz: 0px;
   transform-style: preserve-3d;
   will-change: transform;
-  transform: translate3d(0, var(--bn-fy, 0px), var(--bn-fz, 0px))
-    rotateX(var(--bn-rx, 0deg)) rotateY(var(--bn-ry, 0deg));
-  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translate3d(0, var(--bn-fy), var(--bn-fz)) rotateZ(var(--bn-rz))
+    rotateX(var(--bn-rx)) rotateY(var(--bn-ry));
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Fast, weightless follow while the pointer is over the cover */
@@ -107,99 +117,130 @@ body {
   transition-timing-function: ease-out;
 }
 
-.bn-book:hover {
+.bn-book:hover,
+.bn-book:focus-visible {
   --bn-fy: -10px;
-  --bn-fz: 22px;
+  --bn-fz: 18px;
 }
 
-/* Layers */
-.bn-slab {
-  transform: translateZ(-14px);
-}
-
-.bn-badge {
-  transform: translateZ(22px);
-}
-
-.bn-veil {
-  transform: translateZ(24px) translateY(18px);
-  opacity: 0;
-  transition:
-    opacity 0.35s ease,
-    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.bn-book:hover .bn-veil,
-.bn-book:focus-within .bn-veil {
-  opacity: 1;
-  transform: translateZ(24px) translateY(0);
-}
-
+/* Front cover plane — Highlights sit above the image, spine hinge to the left */
 .bn-face {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(9px);
+  backface-visibility: hidden;
+  border-radius: 6px 14px 14px 6px;
+  overflow: hidden;
   box-shadow:
-    0 1px 2px rgba(20, 42, 29, 0.1),
-    0 14px 26px -12px rgba(20, 42, 29, 0.28),
-    0 34px 60px -26px rgba(20, 42, 29, 0.26);
+    0 1px 2px rgba(20, 42, 29, 0.14),
+    0 16px 30px -14px rgba(20, 42, 29, 0.32),
+    0 38px 64px -28px rgba(20, 42, 29, 0.3);
   transition: box-shadow 0.55s ease;
 }
 
-.bn-book:hover .bn-face {
+.bn-book:hover .bn-face,
+.bn-book:focus-visible .bn-face {
   box-shadow:
-    0 2px 3px rgba(20, 42, 29, 0.08),
-    0 22px 40px -14px rgba(20, 42, 29, 0.34),
-    0 56px 90px -34px rgba(20, 42, 29, 0.36);
+    0 2px 3px rgba(20, 42, 29, 0.1),
+    0 24px 40px -16px rgba(20, 42, 29, 0.4),
+    0 56px 92px -34px rgba(20, 42, 29, 0.38);
+}
+
+/* Bookcloth spine — hinged 90deg on the left edge, spanning the 18px block */
+.bn-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 18px;
+  transform-origin: left center;
+  transform: rotateY(-90deg) translateX(-9px);
+  backface-visibility: hidden;
+  border-radius: 3px 7px 7px 3px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 251, 240, 0.05) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(90deg, #0d1e14 0%, #1c3c2a 34%, #2a5138 62%, #12291a 100%);
+  box-shadow: inset -3px 0 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Stacked page block — hinged 90deg along the bottom edge of the book */
+.bn-pages {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: -18px;
+  height: 18px;
+  transform-origin: top center;
+  transform: rotateX(-90deg) translateY(-9px);
+  backface-visibility: hidden;
+  border-radius: 6px 14px 4px 4px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(30, 42, 34, 0.14) 0 1px,
+      transparent 1px 2.4px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(20, 42, 29, 0.28) 0%,
+      rgba(20, 42, 29, 0.04) 45%,
+      rgba(255, 251, 240, 0.3) 100%
+    ),
+    linear-gradient(90deg, #c9bfa4, #ece5d1 58%, #f7f1e1);
 }
 
 /* Pointer-tracked gloss — position driven by --bn-sx/--bn-sy */
 .bn-sheen {
   background-image: radial-gradient(
-    140% 100% at var(--bn-sx, 64%) var(--bn-sy, 0%),
-    rgba(255, 251, 240, 0.32),
-    rgba(255, 251, 240, 0.06) 42%,
+    140% 100% at var(--bn-sx, 68%) var(--bn-sy, 8%),
+    rgba(255, 251, 240, 0.3),
+    rgba(255, 251, 240, 0.05) 45%,
     transparent 72%
   );
-  opacity: 0.5;
+  opacity: 0.55;
   transition: opacity 0.5s ease;
 }
 
 .bn-book:hover .bn-sheen,
-.bn-book:focus-within .bn-sheen {
+.bn-book:focus-visible .bn-sheen {
   opacity: 1;
 }
 
-/* Floating-contact shadow under the cover */
+/* Floating-contact shadow under the book */
 .bn-ground {
   position: absolute;
   left: 50%;
-  bottom: -9px;
-  width: 70%;
-  height: 14px;
+  bottom: -10px;
+  width: 78%;
+  height: 16px;
   transform: translateX(-50%);
   border-radius: 9999px;
-  background: rgba(20, 42, 29, 0.14);
-  filter: blur(9px);
-  opacity: 0.55;
+  background: rgba(20, 42, 29, 0.16);
+  filter: blur(10px);
+  opacity: 0.6;
   transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
 }
 
-.bn-scene:hover .bn-ground {
-  opacity: 0.8;
-  bottom: -12px;
-  height: 11px;
-  transform: translateX(-50%) scale(1.12);
+.bn-scene:hover .bn-ground,
+.bn-scene:focus-within .bn-ground {
+  opacity: 0.85;
+  bottom: -13px;
+  height: 12px;
+  transform: translateX(-50%) scale(1.1);
 }
 
-/* Keyboard focus: presentational pose + gold ring on the cover */
-[data-bn-book]:focus-within {
-  --bn-fy: -8px;
-  --bn-fz: 16px;
-  --bn-rx: 4deg;
-  --bn-ry: -11deg;
+/* Keyboard focus: lifted pose + gold ring on the cover plane */
+.bn-book:focus-visible {
+  outline: none;
 }
 
 .bn-book:focus-visible .bn-face {
-  outline: 2px solid #b3903f;
+  outline: 2px solid var(--color-gold);
   outline-offset: 3px;
 }
 
@@ -218,8 +259,8 @@ body {
   .bn-book {
     transition: none;
   }
-  .bn-veil,
   .bn-sheen,
+  .bn-face,
   .bn-ground {
     transition: none;
   }

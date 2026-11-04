@@ -1,211 +1,155 @@
-import type { Metadata } from "next";
-import Image from "next/image";
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { allBooks, getBookById } from "@/lib/data";
-import { BookCard } from "@/components/book-card";
-import { CtaBand } from "@/components/cta-band";
-import { BorrowButton } from "@/components/borrow-button";
-import { Stars } from "@/components/stars";
-import { ChevronIcon } from "@/components/icons";
+import toast from "react-hot-toast";
+import { PrivateRoute } from "@/components/private-route";
+import { Spinner } from "@/components/spinner";
+import { authClient } from "@/lib/auth-client";
+import { apiFetch } from "@/lib/api";
+import type { Book } from "@/lib/types";
 
-export function generateStaticParams() {
-  return allBooks.map((book) => ({ id: book.id }));
-}
+const readOnlyClass =
+  "w-full rounded-xl border border-forest/15 bg-forest/5 px-4 py-3 text-sm text-ink-muted outline-none";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/books/[id]">): Promise<Metadata> {
-  const { id } = await params;
-  const book = getBookById(Array.isArray(id) ? id[0] : id);
-  if (!book) return { title: "Book not found" };
-  return { title: `${book.title} by ${book.author}` };
-}
+function BookDetails() {
+  const params = useParams();
+  const id = String(params.id);
+  const { data: session } = authClient.useSession();
+  const [book, setBook] = useState<Book | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-export default async function BookPage({ params }: PageProps<"/books/[id]">) {
-  const { id } = await params;
-  const book = getBookById(Array.isArray(id) ? id[0] : id);
-  if (!book) notFound();
+  const loadBook = useCallback(async () => {
+    try {
+      const data = await apiFetch(`/books/${id}`);
+      setBook(data);
+    } catch {
+      setBook(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
-  const related = allBooks
-    .filter((b) => b.id !== book.id)
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 3);
+  useEffect(() => {
+    loadBook();
+  }, [loadBook]);
 
-  const shelves = [
-    { label: "Pages", value: `${book.pages}` },
-    { label: "Published", value: `${book.year}` },
-    { label: "Format", value: "Hardcover" },
-    { label: "Language", value: "English" },
-    { label: "Rating", value: `${book.rating.toFixed(1)}/5` },
-    { label: "Shelf", value: "Aisle 4 · Nook Corner" },
-  ];
+  useEffect(() => {
+    document.title = book ? `BookNook | ${book.title}` : "BookNook | Book Details";
+  }, [book]);
+
+  const handleBorrow = async () => {
+    setSubmitting(true);
+    try {
+      await apiFetch("/borrows", {
+        method: "POST",
+        body: JSON.stringify({ bookId: id, userName: session?.user.name }),
+      });
+      toast.success("Book borrowed successfully");
+      setModalOpen(false);
+      await loadBook();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not borrow the book");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) return <Spinner />;
+
+  if (!book) {
+    return (
+      <main className="mx-auto max-w-3xl px-5 py-20 text-center">
+        <h1 className="font-display text-3xl text-forest">Book not found</h1>
+        <Link
+          href="/books"
+          className="mt-6 inline-flex rounded-full bg-forest px-6 py-3 text-sm font-semibold text-ivory"
+        >
+          Back to All Books
+        </Link>
+      </main>
+    );
+  }
+
+  const available = book.copies > 0;
 
   return (
-    <main className="flex-1">
-      <section className="bg-ivory-deep py-14 sm:py-20">
-        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
-          {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="text-xs font-medium uppercase tracking-[0.18em] text-ink-muted">
-            <ol className="flex flex-wrap items-center gap-2">
-              <li>
-                <Link href="/" className="transition-colors hover:text-forest">
-                  Home
-                </Link>
-              </li>
-              <li aria-hidden="true">
-                <ChevronIcon className="h-3 w-3" />
-              </li>
-              <li>
-                <Link href="/books" className="transition-colors hover:text-forest">
-                  All Books
-                </Link>
-              </li>
-              <li aria-hidden="true">
-                <ChevronIcon className="h-3 w-3" />
-              </li>
-              <li className="text-forest" aria-current="page">
-                {book.title}
-              </li>
-            </ol>
-          </nav>
+    <main className="mx-auto w-full max-w-5xl px-5 py-12 sm:px-8">
+      <div className="grid gap-10 md:grid-cols-[320px_1fr]">
+        <div className="h-[28rem] overflow-hidden rounded-2xl bg-forest/5 shadow-soft">
+          <img src={book.image} alt={book.title} className="h-full w-full object-cover" />
+        </div>
 
-          <div className="mt-10 grid items-start gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-            {/* Cover */}
-            <div className="relative mx-auto w-full max-w-sm">
-              <div
-                aria-hidden="true"
-                className="absolute -inset-5 -rotate-3 rounded-3xl border border-gold/40 bg-cream/40"
-              />
-              <div className="relative overflow-hidden rounded-3xl shadow-lift">
-                <div className="relative aspect-[2/3]">
-                  <Image
-                    src={book.cover}
-                    alt={`${book.title} book cover by ${book.author}`}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 384px, 420px"
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-              <p className="font-display mt-6 text-center text-sm italic text-ink-muted">
-                Shelf Aisle 4 · Nook Corner — backlit every evening
-              </p>
+        <div>
+          <span className="rounded-full bg-gold/15 px-3 py-1 text-xs font-semibold text-forest">
+            {book.category}
+          </span>
+          <h1 className="mt-4 font-display text-4xl text-forest">{book.title}</h1>
+          <p className="mt-2 text-lg text-ink-muted">by {book.author}</p>
+          <p className="mt-6 leading-relaxed text-ink-muted">{book.description}</p>
+
+          <div className="mt-6 space-y-1 text-sm text-ink-muted">
+            <p>
+              Added by <span className="font-semibold text-forest">{book.addedByName}</span> (
+              {book.addedByEmail})
+            </p>
+            <p>Added on {new Date(book.createdAt).toLocaleDateString()}</p>
+            <p>
+              Copies available:{" "}
+              <span className="font-semibold text-forest">{book.copies}</span>
+            </p>
+          </div>
+
+          <button
+            type="button"
+            disabled={!available}
+            onClick={() => setModalOpen(true)}
+            className="mt-8 inline-flex items-center rounded-full bg-forest px-7 py-3 text-sm font-semibold text-ivory shadow-soft transition-all duration-300 hover:bg-forest-deep hover:shadow-lift disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {available ? "Borrow This Book" : "Not Available"}
+          </button>
+        </div>
+      </div>
+
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-5">
+          <div className="w-full max-w-md rounded-3xl bg-ivory p-8 shadow-lift">
+            <h2 className="font-display text-2xl text-forest">Borrow "{book.title}"</h2>
+            <div className="mt-5 space-y-3">
+              <input readOnly value={session?.user.name ?? ""} className={readOnlyClass} />
+              <input readOnly value={session?.user.email ?? ""} className={readOnlyClass} />
             </div>
-
-            {/* Details */}
-            <div>
-              <span className="inline-flex rounded-full border border-forest/15 bg-cream px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-forest">
-                {book.genre}
-              </span>
-              <h1 className="font-display mt-4 text-3xl font-semibold leading-[1.15] text-forest sm:text-4xl lg:text-[3rem]">
-                {book.title}
-              </h1>
-              <p className="font-display mt-2 text-lg italic text-ink-muted">
-                by {book.author} · {book.year}
-              </p>
-
-              <div className="mt-5 flex items-center gap-4">
-                <Stars rating={book.rating} />
-                <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.18em] text-ink-muted">
-                  <span className="relative inline-flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-60" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
-                  </span>
-                  {book.availableCopies ?? 3} copies on shelf
-                </span>
-              </div>
-
-              <div className="mt-6 max-w-xl space-y-4 text-base leading-relaxed text-ink-muted sm:text-lg">
-                <p>
-                  {book.blurb} A homegrown favourite at BookNook — ask our librarians for
-                  a reading note when you collect your copy.
-                </p>
-                {book.description ? <p>{book.description}</p> : null}
-              </div>
-
-              <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 rounded-3xl border border-forest/10 bg-cream p-6 shadow-soft sm:grid-cols-3">
-                {shelves.map((item) => (
-                  <div key={item.label}>
-                    <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-ink-muted">
-                      {item.label}
-                    </dt>
-                    <dd className="font-display mt-1 text-lg font-semibold text-forest">
-                      {item.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-
-              {/* Availability */}
-              <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2.5 rounded-2xl border border-gold/40 bg-gold-pale px-5 py-4">
-                <span
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-forest"
-                  aria-hidden="true"
-                >
-                  <span className="relative inline-flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-60" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
-                  </span>
-                  Available now
-                </span>
-                <span className="sr-only">
-                  Availability: available for borrowing right now.
-                </span>
-                <span className="text-xs font-medium text-ink">
-                  {book.availableCopies ?? 3} copies waiting on the shelf
-                </span>
-                {(book.waitlist ?? 0) > 0 ? (
-                  <span className="text-xs font-medium text-ink">
-                    {book.waitlist} readers on the waitlist
-                  </span>
-                ) : null}
-                <span className="text-xs font-medium text-ink-muted">
-                  48-hour hold once reserved
-                </span>
-              </div>
-
-              <div className="mt-9 flex flex-wrap items-center gap-4">
-                <BorrowButton />
-                <Link
-                  href="/how-it-works"
-                  className="text-sm font-semibold text-forest underline decoration-gold decoration-2 underline-offset-4 transition-colors hover:text-gold"
-                >
-                  How borrowing works
-                </Link>
-              </div>
-              <p className="mt-3 text-xs text-ink-muted">
-                Free with BookNook membership · 21-day loan · renew once online
-              </p>
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="flex-1 rounded-full border border-forest/20 px-5 py-3 text-sm font-semibold text-forest"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={handleBorrow}
+                className="flex-1 rounded-full bg-forest px-5 py-3 text-sm font-semibold text-ivory disabled:opacity-60"
+              >
+                {submitting ? "Please wait..." : "Confirm Borrow"}
+              </button>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Related */}
-      <section className="bg-ivory py-20">
-        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
-          <h2 className="font-display text-2xl font-semibold text-forest sm:text-3xl">
-            More from <span className="italic text-gold">these shelves</span>
-          </h2>
-          <div className="mt-10 grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 md:gap-x-7">
-            {related.map((b) => (
-              <BookCard key={b.id} book={b} />
-            ))}
-          </div>
-          <div className="mt-12 text-center">
-            <Link
-              href="/books"
-              className="font-display inline-flex items-center gap-2 text-lg font-semibold text-forest transition-colors hover:text-gold"
-            >
-              ← Back to all shelves
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <CtaBand />
+      )}
     </main>
+  );
+}
+
+export default function BookDetailsPage() {
+  return (
+    <PrivateRoute>
+      <BookDetails />
+    </PrivateRoute>
   );
 }
