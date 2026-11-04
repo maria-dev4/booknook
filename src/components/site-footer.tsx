@@ -58,7 +58,7 @@ export function SiteFooter() {
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <LogoMark className="h-11" onDark />
+              <LogoMark className="h-28 w-auto object-contain transition-transform duration-300 group-hover:scale-105" onDark />
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-ivory/60">
               A community library reimagined — meticulously curated shelves, seamless borrowing,

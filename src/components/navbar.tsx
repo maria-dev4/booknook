@@ -56,7 +56,7 @@ const handleLogout = async () => {
             width={280}
             height={260}
             priority
-            className="h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            className="h-28 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </Link>
 

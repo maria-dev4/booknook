@@ -31,7 +31,7 @@ export function AuthCard({ variant }: { variant: "login" | "register" }) {
           />
 
           <div className="relative flex items-center gap-3">
-            <LogoMark className="h-11" onDark />
+            <LogoMark className="h-28 w-auto object-contain transition-transform duration-300 group-hover:scale-105" onDark />
           </div>
 
           <div className="relative">

@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <main className="flex-1 bg-ivory py-24 sm:py-32">
       <div className="mx-auto flex w-full max-w-xl flex-col items-center px-5 text-center sm:px-8">
-        <LogoMark className="h-14" />
+        <LogoMark className="h-28 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
         <p className="mt-8 text-xs font-semibold uppercase tracking-[0.3em] text-gold">
           Page not found
         </p>
