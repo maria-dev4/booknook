@@ -21,7 +21,7 @@ export default function NotFound() {
             href="/"
             className="inline-flex items-center rounded-full bg-forest px-6 py-3 text-sm font-semibold text-ivory shadow-soft transition-all duration-300 hover:bg-forest-deep hover:shadow-lift"
           >
-            Back to the Nook
+            Back to Home
           </Link>
           <Link
             href="/new-arrivals"

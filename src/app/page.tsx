@@ -3,6 +3,9 @@ import { HeroCarousel } from "@/components/hero-carousel";
 import { HowBorrowingWorks } from "@/components/how-borrowing-works";
 import { ReaderReviews } from "@/components/reader-reviews";
 import { CtaBand } from "@/components/cta-band";
+export const metadata = {
+  title: "BookNook | Home",
+};
 
 export default function Home() {
   return (

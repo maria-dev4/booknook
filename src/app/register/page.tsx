@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
+import { PasswordInput } from "@/components/password-input";
+import { SocialButton } from "@/components/social-button";
 
 const checkPassword = (value: string) => {
   if (!/[A-Z]/.test(value)) return "Password must have an uppercase letter";
@@ -17,6 +19,10 @@ export default function RegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+
+  useEffect(() => {
+    document.title = "BookNook | Register";
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,10 +46,11 @@ export default function RegisterPage() {
     setLoading(false);
 
     if (authError) {
-  console.log(authError);
-  toast.error(authError.message || `Registration failed (${authError.status})`);
-  return;
-}
+      toast.error(
+        authError.message || `Registration failed (${authError.status})`,
+      );
+      return;
+    }
     toast.success("Registration successful. Please login.");
     router.push("/login");
   };
@@ -51,8 +58,12 @@ export default function RegisterPage() {
   return (
     <main className="mx-auto flex min-h-[70vh] w-full max-w-md items-center px-5 py-12">
       <div className="w-full rounded-3xl border border-forest/10 bg-white p-8 shadow-soft">
-        <h1 className="font-display text-3xl text-forest">Create your account</h1>
-        <p className="mt-2 text-sm text-ink-muted">Join BookNook and start borrowing books.</p>
+        <h1 className="font-display text-3xl text-forest">
+          Create your account
+        </h1>
+        <p className="mt-2 text-sm text-ink-muted">
+          Join BookNook and start borrowing books.
+        </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <input
@@ -77,14 +88,10 @@ export default function RegisterPage() {
             className="w-full rounded-xl border border-forest/15 px-4 py-3 text-sm outline-none focus:border-gold"
           />
           <div>
-            <input
-              name="password"
-              type="password"
-              required
-              placeholder="Password"
-              className="w-full rounded-xl border border-forest/15 px-4 py-3 text-sm outline-none focus:border-gold"
-            />
-            {passwordError && <p className="mt-1.5 text-sm text-red-600">{passwordError}</p>}
+            <PasswordInput />
+            {passwordError && (
+              <p className="mt-1.5 text-sm text-red-600">{passwordError}</p>
+            )}
           </div>
           <button
             type="submit"
@@ -94,10 +101,22 @@ export default function RegisterPage() {
             {loading ? "Creating account..." : "Register"}
           </button>
         </form>
+        <div className="my-5 flex items-center gap-3 text-xs text-ink-muted">
+          <span className="h-px flex-1 bg-forest/15" />
+          or
+          <span className="h-px flex-1 bg-forest/15" />
+        </div>
+        <div className="space-y-3">
+          <SocialButton provider="google" />
+          <SocialButton provider="github" />
+        </div>
 
         <p className="mt-6 text-center text-sm text-ink-muted">
           Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-forest hover:text-gold">
+          <Link
+            href="/login"
+            className="font-semibold text-forest hover:text-gold"
+          >
             Login
           </Link>
         </p>
