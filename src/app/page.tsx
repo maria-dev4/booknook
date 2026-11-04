@@ -1,5 +1,7 @@
 import { NewArrivals } from "@/components/new-arrivals";
 import { HeroCarousel } from "@/components/hero-carousel";
+import { PopularBooks } from "@/components/popular-books";
+import { TopCategories } from "@/components/top-categories";
 import { HowBorrowingWorks } from "@/components/how-borrowing-works";
 import { ReaderReviews } from "@/components/reader-reviews";
 import { CtaBand } from "@/components/cta-band";
@@ -12,6 +14,8 @@ export default function Home() {
     <main className="flex-1">
       <HeroCarousel />
       <NewArrivals />
+      <PopularBooks />
+      <TopCategories />
       <HowBorrowingWorks />
       <ReaderReviews />
       <CtaBand />

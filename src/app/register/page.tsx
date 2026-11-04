@@ -108,7 +108,6 @@ export default function RegisterPage() {
         </div>
         <div className="space-y-3">
           <SocialButton provider="google" />
-          <SocialButton provider="github" />
         </div>
 
         <p className="mt-6 text-center text-sm text-ink-muted">

@@ -83,7 +83,7 @@ const handleLogout = async () => {
                 className="h-11 w-11 overflow-hidden rounded-full border-2 border-gold"
               >
                 <img
-                  src={user.image || "/avatar.png"}
+                  src={user.image || "/avatar.svg"}
                   alt={user.name}
                   className="h-full w-full object-cover"
                 />
