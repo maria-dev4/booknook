@@ -209,7 +209,12 @@ export type Slide = {
   ctaHref: string;
   background: string;
   theme: "forest" | "ivory" | "gold";
-  book: Book;
+  /**
+   * Mongo `_id` of the book (see src/lib/types) featured on this slide.
+   * The record — cover image, title and author included — is fetched live
+   * from the database in the hero carousel; it is never duplicated here.
+   */
+  bookId: string;
 };
 
 export const heroSlides: Slide[] = [
@@ -224,7 +229,7 @@ export const heroSlides: Slide[] = [
     ctaHref: "/new-arrivals",
     background: "/hero/hero-open-book.jpg",
     theme: "forest",
-    book: newArrivals.find((b) => b.id === "circe")!,
+    bookId: "6aee05696fa0500d4a81d0f5", // The Spanish Love Deception — existing database record
   },
   {
     id: "reader-loved",
@@ -237,7 +242,7 @@ export const heroSlides: Slide[] = [
     ctaHref: "/popular",
     background: "",
     theme: "ivory",
-    book: popularBooks.find((b) => b.id === "song-achilles")!,
+    bookId: "6aee042f6fa0500d4a81d0f4", // It Ends With Us — existing database record
   },
   {
     id: "fresh-shelves",
@@ -250,7 +255,7 @@ export const heroSlides: Slide[] = [
     ctaHref: "/new-arrivals",
     background: "",
     theme: "gold",
-    book: newArrivals.find((b) => b.id === "project-hail-mary")!,
+    bookId: "6aee09096fa0500d4a81d0f9", // The Power of Now — existing database record
   },
 ];
 
